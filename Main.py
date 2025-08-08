@@ -1,15 +1,88 @@
+'''
+MySQL cmd:
+
+
+-- Create database
+CREATE DATABASE movierental;
+
+-- Use the database
+USE movierental;
+
+-- Create billing table
+CREATE TABLE billing (
+    bill_id INT AUTO_INCREMENT PRIMARY KEY,
+    date_of_purchase DATE,
+    customer_number VARCHAR(20),
+    customer_phone VARCHAR(15),
+    movie_name VARCHAR(100),
+    price DECIMAL(10, 2)
+);
+
+'''
+
+
+
+
+# Picture Perfect Rentals - Final Version with MySQL billing
+# Created by Akira Iyer, Daksh Lad and Ashutosh Poddar
+
+import pickle
+import csv
 import mysql.connector
+from datetime import datetime
 
-# MySQL connection function
-def connect_db():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",   # change to your MySQL username
-        password="",   # change to your MySQL password
-        database="rentals"
-    )
+# MySQL Connection
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",  # change if needed
+    password="password",  # change if needed
+    database="movierental"
+)
+cursor = db.cursor()
 
-# ---------------- Customers Menu ----------------
+# Create billing table if not exists
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS billing (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    purchase_date DATE,
+    customer_id VARCHAR(20),
+    customer_name VARCHAR(50),
+    customer_phone VARCHAR(15),
+    movie_names TEXT,
+    total_price INT
+)
+""")
+db.commit()
+
+# File paths
+CUSTOMERS_FILE = "customers.dat"
+MOVIES_FILE = "movies.csv"
+
+# Helper functions for files
+def load_customers():
+    try:
+        with open(CUSTOMERS_FILE, "rb") as f:
+            return pickle.load(f)
+    except:
+        return []
+
+def save_customers(customers):
+    with open(CUSTOMERS_FILE, "wb") as f:
+        pickle.dump(customers, f)
+
+def load_movies():
+    try:
+        with open(MOVIES_FILE, "r", newline="") as f:
+            return list(csv.reader(f))
+    except:
+        return []
+
+def save_movies(movies):
+    with open(MOVIES_FILE, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(movies)
+
+# Customers Menu
 def customers_menu():
     while True:
         print("\nCUSTOMERS MENU")
@@ -21,54 +94,63 @@ def customers_menu():
         print("6. Back to Main Menu")
 
         ch = input("Enter choice: ")
-        db = connect_db()
-        cur = db.cursor()
 
         if ch == "1":
+            customers = load_customers()
             cid = input("Enter Customer ID: ")
             name = input("Enter Name: ")
             phone = input("Enter Phone: ")
-            cur.execute("INSERT INTO customers VALUES (%s, %s, %s)", (cid, name, phone))
-            db.commit()
+            customers.append([cid, name, phone])
+            save_customers(customers)
             print("Customer added successfully.")
 
         elif ch == "2":
+            customers = load_customers()
             cid = input("Enter Customer ID to delete: ")
-            cur.execute("DELETE FROM customers WHERE cid=%s", (cid,))
-            db.commit()
+            customers = [c for c in customers if c[0] != cid]
+            save_customers(customers)
             print("Customer deleted if existed.")
 
         elif ch == "3":
-            cur.execute("SELECT * FROM customers")
-            for row in cur.fetchall():
-                print(row)
+            customers = load_customers()
+            for c in customers:
+                print(c)
 
         elif ch == "4":
+            customers = load_customers()
             cid = input("Enter Customer ID to search: ")
-            cur.execute("SELECT * FROM customers WHERE cid=%s", (cid,))
-            data = cur.fetchone()
-            if data:
-                print(data)
-            else:
+            found = False
+            for c in customers:
+                if c[0] == cid:
+                    print(c)
+                    found = True
+                    break
+            if not found:
                 print("Customer not found.")
 
         elif ch == "5":
+            customers = load_customers()
             cid = input("Enter Customer ID to modify: ")
-            name = input("Enter new Name: ")
-            phone = input("Enter new Phone: ")
-            cur.execute("UPDATE customers SET name=%s, phone=%s WHERE cid=%s", (name, phone, cid))
-            db.commit()
-            print("Customer modified.")
+            found = False
+            for i in range(len(customers)):
+                if customers[i][0] == cid:
+                    name = input("Enter new Name: ")
+                    phone = input("Enter new Phone: ")
+                    customers[i] = [cid, name, phone]
+                    found = True
+                    break
+            save_customers(customers)
+            if found:
+                print("Customer modified.")
+            else:
+                print("Customer not found.")
 
         elif ch == "6":
-            db.close()
             break
         else:
             print("Invalid choice.")
 
-        db.close()
-
-# ---------------- Movies Menu ----------------
+# Movies Menu
 def movies_menu():
     while True:
         print("\nMOVIES MENU")
@@ -80,54 +162,63 @@ def movies_menu():
         print("6. Back to Main Menu")
 
         ch = input("Enter choice: ")
-        db = connect_db()
-        cur = db.cursor()
 
         if ch == "1":
+            movies = load_movies()
             mid = input("Enter Movie ID: ")
             title = input("Enter Title: ")
             price = input("Enter Rental Price: ")
-            cur.execute("INSERT INTO movies VALUES (%s, %s, %s)", (mid, title, price))
-            db.commit()
+            movies.append([mid, title, price])
+            save_movies(movies)
             print("Movie added successfully.")
 
         elif ch == "2":
+            movies = load_movies()
             mid = input("Enter Movie ID to delete: ")
-            cur.execute("DELETE FROM movies WHERE mid=%s", (mid,))
-            db.commit()
+            movies = [m for m in movies if m[0] != mid]
+            save_movies(movies)
             print("Movie deleted if existed.")
 
         elif ch == "3":
-            cur.execute("SELECT * FROM movies")
-            for row in cur.fetchall():
-                print(row)
+            movies = load_movies()
+            for m in movies:
+                print(m)
 
         elif ch == "4":
+            movies = load_movies()
             mid = input("Enter Movie ID to search: ")
-            cur.execute("SELECT * FROM movies WHERE mid=%s", (mid,))
-            data = cur.fetchone()
-            if data:
-                print(data)
-            else:
+            found = False
+            for m in movies:
+                if m[0] == mid:
+                    print(m)
+                    found = True
+                    break
+            if not found:
                 print("Movie not found.")
 
         elif ch == "5":
+            movies = load_movies()
             mid = input("Enter Movie ID to modify: ")
-            title = input("Enter new Title: ")
-            price = input("Enter new Rental Price: ")
-            cur.execute("UPDATE movies SET title=%s, price=%s WHERE mid=%s", (title, price, mid))
-            db.commit()
-            print("Movie modified.")
+            found = False
+            for i in range(len(movies)):
+                if movies[i][0] == mid:
+                    title = input("Enter new Title: ")
+                    price = input("Enter new Rental Price: ")
+                    movies[i] = [mid, title, price]
+                    found = True
+                    break
+            save_movies(movies)
+            if found:
+                print("Movie modified.")
+            else:
+                print("Movie not found.")
 
         elif ch == "6":
-            db.close()
             break
         else:
             print("Invalid choice.")
 
-        db.close()
-
-# ---------------- Billing Menu ----------------
+# Billing Menu (with MySQL)
 def billing_menu():
     while True:
         print("\nBILLING MENU")
@@ -135,30 +226,26 @@ def billing_menu():
         print("2. Back to Main Menu")
 
         ch = input("Enter choice: ")
-        db = connect_db()
-        cur = db.cursor()
 
         if ch == "1":
-            cur.execute("SELECT * FROM customers")
-            customers = cur.fetchall()
-            if not customers:
-                print("No customers found.")
-                db.close()
-                continue
+            customers = load_customers()
+            movies = load_movies()
 
-            cur.execute("SELECT * FROM movies")
-            movies = cur.fetchall()
+            if not customers:
+                print("No customers found. Please add customers first.")
+                continue
             if not movies:
-                print("No movies found.")
-                db.close()
+                print("No movies found. Please add movies first.")
                 continue
 
             cid = input("Enter Customer ID: ")
-            cur.execute("SELECT * FROM customers WHERE cid=%s", (cid,))
-            customer = cur.fetchone()
+            customer = None
+            for c in customers:
+                if c[0] == cid:
+                    customer = c
+                    break
             if not customer:
                 print("Customer not found.")
-                db.close()
                 continue
 
             print("\nAvailable Movies:")
@@ -172,65 +259,63 @@ def billing_menu():
                 mid = input("Enter Movie ID to rent (or 'done' to finish): ")
                 if mid.lower() == "done":
                     break
-                cur.execute("SELECT * FROM movies WHERE mid=%s", (mid,))
-                movie = cur.fetchone()
-                if movie:
-                    rented_movies.append(movie[1])
-                    total_price += int(movie[2])
+                found_movie = None
+                for m in movies:
+                    if m[0] == mid:
+                        found_movie = m
+                        break
+                if found_movie:
+                    rented_movies.append(found_movie[1])
+                    total_price += int(found_movie[2])
                 else:
                     print("Invalid Movie ID.")
 
             if rented_movies:
-                cur.execute(
-                    "INSERT INTO billing (cid, customer_name, movies, total_price) VALUES (%s, %s, %s, %s)",
-                    (cid, customer[1], ", ".join(rented_movies), total_price)
-                )
+                date_today = datetime.now().date()
+                cursor.execute("""
+                    INSERT INTO billing (purchase_date, customer_id, customer_name, customer_phone, movie_names, total_price)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, (date_today, cid, customer[1], customer[2], ", ".join(rented_movies), total_price))
                 db.commit()
                 print("Total Price: Rs.", total_price)
-                print("Rental saved successfully.")
+                print("Rental saved to MySQL successfully.")
+            else:
+                print("No movies rented.")
 
         elif ch == "2":
-            db.close()
             break
         else:
             print("Invalid choice.")
 
-        db.close()
-
-# ---------------- Reports Menu ----------------
+# Reports Menu
 def reports_menu():
     while True:
         print("\nREPORTS MENU")
         print("1. List Customers")
         print("2. List Movies")
-        print("3. List Rentals")
+        print("3. List Rentals (from MySQL)")
         print("4. Back to Main Menu")
 
         ch = input("Enter choice: ")
-        db = connect_db()
-        cur = db.cursor()
 
         if ch == "1":
-            cur.execute("SELECT * FROM customers")
-            for row in cur.fetchall():
-                print(row)
+            customers = load_customers()
+            for c in customers:
+                print(c)
         elif ch == "2":
-            cur.execute("SELECT * FROM movies")
-            for row in cur.fetchall():
-                print(row)
+            movies = load_movies()
+            for m in movies:
+                print(m)
         elif ch == "3":
-            cur.execute("SELECT * FROM billing")
-            for row in cur.fetchall():
+            cursor.execute("SELECT * FROM billing")
+            for row in cursor.fetchall():
                 print(row)
         elif ch == "4":
-            db.close()
             break
         else:
             print("Invalid choice.")
 
-        db.close()
-
-# ---------------- Main Menu ----------------
+# Main Menu
 while True:
     print("\nPicture Perfect Rentals")
     print("1. Customers")
