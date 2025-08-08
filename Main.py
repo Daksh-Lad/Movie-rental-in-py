@@ -6,6 +6,7 @@ import csv
 # -------------------------
 CUSTOMERS_FILE = "customers.dat"
 MOVIES_FILE = "movies.csv"
+BILLING_FILE = "billing.dat"
 
 # -------------------------
 # Helper functions
@@ -32,6 +33,17 @@ def save_movies(movies):
     with open(MOVIES_FILE, "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerows(movies)
+
+def load_billing():
+    try:
+        with open(BILLING_FILE, "rb") as f:
+            return pickle.load(f)
+    except:
+        return []
+
+def save_billing(bills):
+    with open(BILLING_FILE, "wb") as f:
+        pickle.dump(bills, f)
 
 # -------------------------
 # Customers Menu
@@ -174,19 +186,68 @@ def movies_menu():
             print("Invalid choice.")
 
 # -------------------------
-# Billing Menu (Placeholder)
+# Billing Menu
 # -------------------------
 def billing_menu():
     while True:
         print("\nBILLING MENU")
-        print("1. Ask how many movies rented")
+        print("1. New Rental")
         print("2. Back to Main Menu")
 
         ch = input("Enter choice: ")
 
         if ch == "1":
-            qty = int(input("Enter number of movies rented: "))
-            print("Movies rented:", qty)
+            customers = load_customers()
+            movies = load_movies()
+            bills = load_billing()
+
+            if not customers:
+                print("No customers found. Please add customers first.")
+                continue
+            if not movies:
+                print("No movies found. Please add movies first.")
+                continue
+
+            cid = input("Enter Customer ID: ")
+            customer = None
+            for c in customers:
+                if c[0] == cid:
+                    customer = c
+                    break
+            if not customer:
+                print("Customer not found.")
+                continue
+
+            print("\nAvailable Movies:")
+            for m in movies:
+                print(m[0], "-", m[1], "- Rs.", m[2])
+
+            rented_movies = []
+            total_price = 0
+
+            while True:
+                mid = input("Enter Movie ID to rent (or 'done' to finish): ")
+                if mid.lower() == "done":
+                    break
+                found_movie = None
+                for m in movies:
+                    if m[0] == mid:
+                        found_movie = m
+                        break
+                if found_movie:
+                    rented_movies.append(found_movie[1])
+                    total_price += int(found_movie[2])
+                else:
+                    print("Invalid Movie ID.")
+
+            if rented_movies:
+                bills.append([cid, customer[1], rented_movies, total_price])
+                save_billing(bills)
+                print("Total Price: Rs.", total_price)
+                print("Rental saved successfully.")
+            else:
+                print("No movies rented.")
+
         elif ch == "2":
             break
         else:
@@ -200,7 +261,8 @@ def reports_menu():
         print("\nREPORTS MENU")
         print("1. List Customers")
         print("2. List Movies")
-        print("3. Back to Main Menu")
+        print("3. List Rentals")
+        print("4. Back to Main Menu")
 
         ch = input("Enter choice: ")
 
@@ -213,6 +275,10 @@ def reports_menu():
             for m in movies:
                 print(m)
         elif ch == "3":
+            bills = load_billing()
+            for b in bills:
+                print("Customer:", b[1], "| Movies:", ", ".join(b[2]), "| Total:", b[3])
+        elif ch == "4":
             break
         else:
             print("Invalid choice.")
