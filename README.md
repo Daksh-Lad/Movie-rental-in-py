@@ -1,91 +1,66 @@
-# Movie-rental-in-py
+# ABC Online Movie Rental
 
+A simple Python-based prototype for an online movie rental system.  
+This project manages customers and movies locally using binary (`.dat`) and CSV files,  
+while billing information is stored in a MySQL database.
 
-🎬 ABC Online Movie Rental
-A simple Python + MySQL program for managing a small movie rental system.
-This is a school project demonstrating file handling in Python, basic database connectivity with MySQL, and menu-driven programming.
+## Features
+- **Customer Management** – Add and list customers.
+- **Movie Management** – Add and list available movies.
+- **Billing (MySQL)** – Store billing details including:
+  - Date of purchase
+  - Customer number
+  - Customer phone number
+  - Movie name
+  - Price
+- **Reports** – Display customers and movies.
+- **Persistent Storage** – Uses `pickle` for customers, CSV for movies, and MySQL for billing.
 
-📂 Features
-Customers — Add and list customers (stored in a .dat binary file).
+## Requirements
+- Python 3.x
+- MySQL Server
+- Required Python libraries:
+  - `mysql-connector-python`
 
-Movies — Add and list movies (stored in a .csv file).
+## MySQL Setup
+Run the following command in MySQL before using the program:
 
-Billing (MySQL) — Store billing records in MySQL with:
-
-Purchase date
-
-Customer number
-
-Customer phone number
-
-Movie name
-
-Price
-
-Reports — View customer and movie records.
-
-🗂 File Structure
-bash
-Copy
-Edit
-.
-├── main.py           # Main program file
-├── customers.dat     # Binary file storing customer details
-├── movies.csv        # CSV file storing movie details
-├── README.md         # This file
-🛠 Requirements
-Python 3.x
-
-MySQL Server
-
-Python library: mysql-connector-python
-
-Install MySQL connector:
-
-bash
-Copy
-Edit
-pip install mysql-connector-python
-🗄 MySQL Setup
-Run this in your MySQL terminal to create the database and billing table:
-
-sql
-Copy
-Edit
+```sql
 CREATE DATABASE movierental;
 USE movierental;
-
 CREATE TABLE billing (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    purchase_date DATE,
-    customer_number VARCHAR(50),
-    phone_number VARCHAR(15),
+    date_of_purchase DATE,
+    customer_number VARCHAR(20),
+    phone_number VARCHAR(20),
     movie_name VARCHAR(100),
     price DECIMAL(10,2)
 );
-▶️ How to Run
-Clone this repository:
+```
 
-bash
-Copy
-Edit
-git clone https://github.com/yourusername/movierental.git
-Navigate to the folder:
+## Usage
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/movierental.git
+   ```
+2. Install dependencies:
+   ```bash
+   pip install mysql-connector-python
+   ```
+3. Run the program:
+   ```bash
+   python main.py
+   ```
 
-bash
-Copy
-Edit
-cd movierental
-Run the program:
+## File Structure
+```
+movierental/
+│
+├── customers.dat       # Stores customer data
+├── movies.csv          # Stores movie data
+├── main.py             # Main Python program
+├── README.md           # Project documentation
+```
 
-bash
-Copy
-Edit
-python main.py
-📌 Notes
-Only billing is stored in MySQL.
-
-Customers are stored in a binary .dat file.
-
-Movies are stored in a .csv file.
-
+## License
+This project is for educational purposes only.
