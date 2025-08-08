@@ -1,16 +1,19 @@
+#Welcome to the code for 'Picture Perfect Rentals'
+#This program has been created by Akira Iyer, Daksh Lad and Ashutosh Poddar
+
 import pickle
 import csv
 
-# -------------------------
+
 # File paths
-# -------------------------
+
 CUSTOMERS_FILE = "customers.dat"
 MOVIES_FILE = "movies.csv"
 BILLING_FILE = "billing.dat"
 
-# -------------------------
+
 # Helper functions
-# -------------------------
+
 def load_customers():
     try:
         with open(CUSTOMERS_FILE, "rb") as f:
@@ -45,9 +48,9 @@ def save_billing(bills):
     with open(BILLING_FILE, "wb") as f:
         pickle.dump(bills, f)
 
-# -------------------------
+
 # Customers Menu
-# -------------------------
+
 def customers_menu():
     while True:
         print("\nCUSTOMERS MENU")
@@ -115,9 +118,9 @@ def customers_menu():
         else:
             print("Invalid choice.")
 
-# -------------------------
+
 # Movies Menu
-# -------------------------
+
 def movies_menu():
     while True:
         print("\nMOVIES MENU")
@@ -185,9 +188,9 @@ def movies_menu():
         else:
             print("Invalid choice.")
 
-# -------------------------
+
 # Billing Menu
-# -------------------------
+
 def billing_menu():
     while True:
         print("\nBILLING MENU")
@@ -253,9 +256,9 @@ def billing_menu():
         else:
             print("Invalid choice.")
 
-# -------------------------
+
 # Reports Menu
-# -------------------------
+
 def reports_menu():
     while True:
         print("\nREPORTS MENU")
@@ -283,9 +286,9 @@ def reports_menu():
         else:
             print("Invalid choice.")
 
-# -------------------------
+
 # Main Menu
-# -------------------------
+
 while True:
     print("\nPicture Perfect Rentals")
     print("1. Customers")
@@ -309,3 +312,6 @@ while True:
         break
     else:
         print("Invalid choice.")
+
+#End of program
+#Thank you!
