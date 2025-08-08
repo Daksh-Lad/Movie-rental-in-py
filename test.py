@@ -287,7 +287,7 @@ def reports_menu():
 # Main Menu
 # -------------------------
 while True:
-    print("\nABC MENU")
+    print("\nMovie Rental")
     print("1. Customers")
     print("2. Movies")
     print("3. Billing")
