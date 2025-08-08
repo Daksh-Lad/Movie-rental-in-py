@@ -1,206 +1,245 @@
-import csv
 import pickle
-import os
+import csv
 
-# ------------------ Customers (Binary File) ------------------
+# -------------------------
+# File paths
+# -------------------------
+CUSTOMERS_FILE = "customers.dat"
+MOVIES_FILE = "movies.csv"
 
-customer_file = "customers.dat"
+# -------------------------
+# Helper functions
+# -------------------------
+def load_customers():
+    try:
+        with open(CUSTOMERS_FILE, "rb") as f:
+            return pickle.load(f)
+    except:
+        return []
 
-def add_customer():
-    customer = {}
-    customer["id"] = input("Enter Customer ID: ")
-    customer["name"] = input("Enter Customer Name: ")
-    customer["email"] = input("Enter Customer Email: ")
-    customer["phone"] = input("Enter Customer Phone: ")
-    
-    customers = []
-    if os.path.exists(customer_file):
-        with open(customer_file, "rb") as f:
-            customers = pickle.load(f)
-    customers.append(customer)
-    
-    with open(customer_file, "wb") as f:
+def save_customers(customers):
+    with open(CUSTOMERS_FILE, "wb") as f:
         pickle.dump(customers, f)
-    print("Customer added successfully.")
 
-def delete_customer():
-    cid = input("Enter Customer ID to delete: ")
-    if os.path.exists(customer_file):
-        with open(customer_file, "rb") as f:
-            customers = pickle.load(f)
-        customers = [c for c in customers if c["id"] != cid]
-        with open(customer_file, "wb") as f:
-            pickle.dump(customers, f)
-        print("Customer deleted successfully.")
-    else:
-        print("No customer records found.")
+def load_movies():
+    try:
+        with open(MOVIES_FILE, "r", newline="") as f:
+            return list(csv.reader(f))
+    except:
+        return []
 
-def visualise_customers():
-    if os.path.exists(customer_file):
-        with open(customer_file, "rb") as f:
-            customers = pickle.load(f)
-        for c in customers:
-            print("ID:", c["id"], "Name:", c["name"], "Email:", c["email"], "Phone:", c["phone"])
-    else:
-        print("No customer records found.")
+def save_movies(movies):
+    with open(MOVIES_FILE, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(movies)
 
-def search_customer():
-    cid = input("Enter Customer ID to search: ")
-    if os.path.exists(customer_file):
-        with open(customer_file, "rb") as f:
-            customers = pickle.load(f)
-        for c in customers:
-            if c["id"] == cid:
-                print("ID:", c["id"], "Name:", c["name"], "Email:", c["email"], "Phone:", c["phone"])
-                return
-        print("Customer not found.")
-    else:
-        print("No customer records found.")
-
-def modify_customer():
-    cid = input("Enter Customer ID to modify: ")
-    if os.path.exists(customer_file):
-        with open(customer_file, "rb") as f:
-            customers = pickle.load(f)
-        for c in customers:
-            if c["id"] == cid:
-                c["name"] = input("Enter new name: ")
-                c["email"] = input("Enter new email: ")
-                c["phone"] = input("Enter new phone: ")
-                with open(customer_file, "wb") as f:
-                    pickle.dump(customers, f)
-                print("Customer modified successfully.")
-                return
-        print("Customer not found.")
-    else:
-        print("No customer records found.")
-
+# -------------------------
+# Customers Menu
+# -------------------------
 def customers_menu():
     while True:
-        print("\n--- Customers Menu ---")
-        print("1. Add")
-        print("2. Delete")
-        print("3. Visualise")
-        print("4. Search")
-        print("5. Modify")
-        print("6. Back")
-        choice = input("Enter choice: ")
-        
-        if choice == "1":
-            add_customer()
-        elif choice == "2":
-            delete_customer()
-        elif choice == "3":
-            visualise_customers()
-        elif choice == "4":
-            search_customer()
-        elif choice == "5":
-            modify_customer()
-        elif choice == "6":
+        print("\nCUSTOMERS MENU")
+        print("1. Add Customer")
+        print("2. Delete Customer")
+        print("3. Visualise All Customers")
+        print("4. Search Customer")
+        print("5. Modify Customer")
+        print("6. Back to Main Menu")
+
+        ch = input("Enter choice: ")
+
+        if ch == "1":
+            customers = load_customers()
+            cid = input("Enter Customer ID: ")
+            name = input("Enter Name: ")
+            phone = input("Enter Phone: ")
+            customers.append([cid, name, phone])
+            save_customers(customers)
+            print("Customer added successfully.")
+
+        elif ch == "2":
+            customers = load_customers()
+            cid = input("Enter Customer ID to delete: ")
+            customers = [c for c in customers if c[0] != cid]
+            save_customers(customers)
+            print("Customer deleted if existed.")
+
+        elif ch == "3":
+            customers = load_customers()
+            for c in customers:
+                print(c)
+
+        elif ch == "4":
+            customers = load_customers()
+            cid = input("Enter Customer ID to search: ")
+            found = False
+            for c in customers:
+                if c[0] == cid:
+                    print(c)
+                    found = True
+                    break
+            if not found:
+                print("Customer not found.")
+
+        elif ch == "5":
+            customers = load_customers()
+            cid = input("Enter Customer ID to modify: ")
+            found = False
+            for i in range(len(customers)):
+                if customers[i][0] == cid:
+                    name = input("Enter new Name: ")
+                    phone = input("Enter new Phone: ")
+                    customers[i] = [cid, name, phone]
+                    found = True
+                    break
+            save_customers(customers)
+            if found:
+                print("Customer modified.")
+            else:
+                print("Customer not found.")
+
+        elif ch == "6":
             break
         else:
             print("Invalid choice.")
 
-# ------------------ Movies (CSV File) ------------------
-
-movies_file = "movies.csv"
-
-def add_movie():
-    movie_id = input("Enter Movie ID: ")
-    title = input("Enter Title: ")
-    genre = input("Enter Genre: ")
-    price = input("Enter Price: ")
-    
-    with open(movies_file, "a", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow([movie_id, title, genre, price])
-    print("Movie added successfully.")
-
-def list_movies():
-    if os.path.exists(movies_file):
-        with open(movies_file, "r") as f:
-            reader = csv.reader(f)
-            for row in reader:
-                print("ID:", row[0], "Title:", row[1], "Genre:", row[2], "Price:", row[3])
-    else:
-        print("No movies found.")
-
+# -------------------------
+# Movies Menu
+# -------------------------
 def movies_menu():
     while True:
-        print("\n--- Movies Menu ---")
+        print("\nMOVIES MENU")
         print("1. Add Movie")
-        print("2. Back")
-        choice = input("Enter choice: ")
-        
-        if choice == "1":
-            add_movie()
-        elif choice == "2":
+        print("2. Delete Movie")
+        print("3. Visualise All Movies")
+        print("4. Search Movie")
+        print("5. Modify Movie")
+        print("6. Back to Main Menu")
+
+        ch = input("Enter choice: ")
+
+        if ch == "1":
+            movies = load_movies()
+            mid = input("Enter Movie ID: ")
+            title = input("Enter Title: ")
+            price = input("Enter Rental Price: ")
+            movies.append([mid, title, price])
+            save_movies(movies)
+            print("Movie added successfully.")
+
+        elif ch == "2":
+            movies = load_movies()
+            mid = input("Enter Movie ID to delete: ")
+            movies = [m for m in movies if m[0] != mid]
+            save_movies(movies)
+            print("Movie deleted if existed.")
+
+        elif ch == "3":
+            movies = load_movies()
+            for m in movies:
+                print(m)
+
+        elif ch == "4":
+            movies = load_movies()
+            mid = input("Enter Movie ID to search: ")
+            found = False
+            for m in movies:
+                if m[0] == mid:
+                    print(m)
+                    found = True
+                    break
+            if not found:
+                print("Movie not found.")
+
+        elif ch == "5":
+            movies = load_movies()
+            mid = input("Enter Movie ID to modify: ")
+            found = False
+            for i in range(len(movies)):
+                if movies[i][0] == mid:
+                    title = input("Enter new Title: ")
+                    price = input("Enter new Rental Price: ")
+                    movies[i] = [mid, title, price]
+                    found = True
+                    break
+            save_movies(movies)
+            if found:
+                print("Movie modified.")
+            else:
+                print("Movie not found.")
+
+        elif ch == "6":
             break
         else:
             print("Invalid choice.")
 
-# ------------------ Billing (MySQL Placeholder) ------------------
-
+# -------------------------
+# Billing Menu (Placeholder)
+# -------------------------
 def billing_menu():
     while True:
-        print("\n--- Billing Menu ---")
-        print("1. Purchase Movies")
-        print("2. Back")
-        choice = input("Enter choice: ")
-        
-        if choice == "1":
-            num = int(input("Enter number of movies purchased: "))
-            print("[MySQL INSERT operation will be here later]")
-            print("Billing completed for", num, "movies.")
-        elif choice == "2":
+        print("\nBILLING MENU")
+        print("1. Ask how many movies rented")
+        print("2. Back to Main Menu")
+
+        ch = input("Enter choice: ")
+
+        if ch == "1":
+            qty = int(input("Enter number of movies rented: "))
+            print("Movies rented:", qty)
+        elif ch == "2":
             break
         else:
             print("Invalid choice.")
 
-# ------------------ Reports ------------------
-
+# -------------------------
+# Reports Menu
+# -------------------------
 def reports_menu():
     while True:
-        print("\n--- Reports Menu ---")
+        print("\nREPORTS MENU")
         print("1. List Customers")
         print("2. List Movies")
-        print("3. Back")
-        choice = input("Enter choice: ")
-        
-        if choice == "1":
-            visualise_customers()
-        elif choice == "2":
-            list_movies()
-        elif choice == "3":
+        print("3. Back to Main Menu")
+
+        ch = input("Enter choice: ")
+
+        if ch == "1":
+            customers = load_customers()
+            for c in customers:
+                print(c)
+        elif ch == "2":
+            movies = load_movies()
+            for m in movies:
+                print(m)
+        elif ch == "3":
             break
         else:
             print("Invalid choice.")
 
-# ------------------ Main Menu ------------------
+# -------------------------
+# Main Menu
+# -------------------------
+while True:
+    print("\nABC MENU")
+    print("1. Customers")
+    print("2. Movies")
+    print("3. Billing")
+    print("4. Reports")
+    print("5. Exit")
 
-def main_menu():
-    while True:
-        print("\n=== ABC Online Movie Rental ===")
-        print("1. Customers")
-        print("2. Movies")
-        print("3. Billing")
-        print("4. Reports")
-        print("5. Exit")
-        choice = input("Enter choice: ")
-        
-        if choice == "1":
-            customers_menu()
-        elif choice == "2":
-            movies_menu()
-        elif choice == "3":
-            billing_menu()
-        elif choice == "4":
-            reports_menu()
-        elif choice == "5":
-            print("Exiting program...")
-            break
-        else:
-            print("Invalid choice.")
+    choice = input("Enter choice: ")
 
-# Run program
-main_menu()
+    if choice == "1":
+        customers_menu()
+    elif choice == "2":
+        movies_menu()
+    elif choice == "3":
+        billing_menu()
+    elif choice == "4":
+        reports_menu()
+    elif choice == "5":
+        print("Exiting program.")
+        break
+    else:
+        print("Invalid choice.")
