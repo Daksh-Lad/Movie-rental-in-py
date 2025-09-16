@@ -1,0 +1,177 @@
+1. Customer Distribution by Membership Type
+
+Graph Type: Pie Chart
+
+Data: Count of customers by membership type (Regular/Premium).
+
+Purpose: To visually show the proportion of customers in each membership category.
+
+Example: How many customers are Regular vs. Premium members?
+
+
+
+
+3. Popular Genres in Rentals
+
+Graph Type: Bar Chart
+
+Data: Count of rentals by genre.
+
+Purpose: To determine which movie genres are most popular among customers.
+
+Example: What genre (e.g., Action, Comedy, Drama) is rented the most?
+
+
+
+
+4. Customer Age Distribution
+
+Graph Type: Histogram
+
+Data: Customer ages.
+
+Purpose: To analyze the distribution of customers' ages and identify age groups that are most likely to rent movies.
+
+Example: Distribution of customers by age group (e.g., 18-25, 26-35, etc.).
+
+
+
+
+
+5. Movies Rented by Director
+
+Graph Type: Bar Chart
+
+Data: Number of rentals per director.
+
+Purpose: To analyze which directors’ movies are being rented the most.
+
+Example: Which directors have the most popular movies among customers?
+
+
+
+
+
+
+7. Movies Available by Genre
+
+Graph Type: Stacked Bar Chart
+
+Data: Number of available movies by genre.
+
+Purpose: To see the distribution of available movies across different genres.
+
+Example: How many movies are available in each genre?
+
+
+
+
+
+
+
+
+Movie Rating Distribution
+
+Graph Type: Histogram
+
+Data: Distribution of movie ratings (e.g., PG, 13+, R) across all movies.
+
+Purpose: To analyze the spread of ratings for the movies in your collection. Are most of the movies family-friendly, or are they for a more mature audience?
+
+
+
+38. Customer Rental Frequency
+
+Graph Type: Histogram
+
+Data: Distribution of the number of rentals per customer.
+
+Purpose: To analyze how frequently different customers rent movies and identify loyal customers.
+
+
+
+
+40. Gender-Based Average Rental Spend
+
+Graph Type: Bar Chart
+
+Data: Average spend per rental by gender.
+
+Purpose: To explore if there are any notable differences in how much male vs. female customers are spending on rentals.
+
+
+
+
+
+57. Average Movie Rental Duration by Genre
+
+Graph Type: Box Plot
+
+Data: Average rental duration grouped by genre.
+
+Purpose: To understand if certain genres are rented for longer periods of time compared to others.
+
+
+
+
+50. Revenue by Movie Type (e.g., Blockbuster vs. Indie)
+
+Graph Type: Bar Chart
+
+Data: Revenue generated from blockbuster movies vs. indie movies.
+
+Purpose: To compare the profitability of blockbuster films and independent films within the rental service.
+
+
+
+46. Price Distribution of Movies
+
+Graph Type: Histogram
+
+Data: Distribution of movie prices.
+
+Purpose: To see if there's a concentration of movies in certain price ranges, and identify any pricing patterns.
+
+
+
+30. Gender-Based Rental Behavior (Age vs. Rentals)
+
+Graph Type: Scatter Plot
+
+Data: Age of customer vs. number of rentals, broken down by gender.
+
+Purpose: To analyze if gender has an impact on rental frequency across different age groups.
+
+
+
+
+29. Monthly Movie Additions to the Inventory
+
+Graph Type: Line Plot
+
+Data: Number of movies added to the inventory each month.
+
+Purpose: To track how often new movies are being added to the inventory and identify any seasonal spikes in acquisitions.
+
+
+
+
+27. Movies with Most Copies Rented
+
+Graph Type: Bar Chart
+
+Data: Number of copies rented per movie.
+
+Purpose: To identify which movies have the highest rental frequency and ensure adequate stock is maintained.
+
+
+
+
+24. Number of Rentals by Language
+
+Graph Type: Pie Chart
+
+Data: Proportion of rentals by movie language.
+
+Purpose: To identify the popularity of movies in different languages and assess whether more foreign-language films should be added to the collection.
+
