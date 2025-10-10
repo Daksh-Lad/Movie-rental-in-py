@@ -1,5 +1,4 @@
-#Welcome to the code for 'Picture Perfect Rentals'
-#This program has been created by Akira Iyer, Daksh Lad and Ashutosh Poddar
+
 
 import pickle
 import csv
@@ -393,13 +392,83 @@ def billing_menu():
             print("Invalid choice.")
 
 
+import matplotlib.pyplot as plt
+from collections import Counter
+
+# --- Graph Functions ---
+def graph_customers_membership():
+    customers = load_customers()
+    if not customers:
+        print("No customers to display graph.")
+        return
+
+    membership_counts = Counter(c[7] for c in customers)
+    labels = membership_counts.keys()
+    sizes = membership_counts.values()
+
+    plt.figure(figsize=(6,6))
+    plt.pie(sizes, labels=labels, autopct="%1.1f%%", startangle=90, colors=["skyblue","orange"])
+    plt.title("Customer Distribution by Membership Type")
+    plt.show()
+
+
+def graph_movies_genre():
+    movies = load_movies()
+    if not movies:
+        print("No movies to display graph.")
+        return
+
+    genre_counts = Counter(m[2] for m in movies)
+    genres = list(genre_counts.keys())
+    counts = list(genre_counts.values())
+
+    plt.figure(figsize=(8,5))
+    plt.bar(genres, counts, color="lightgreen")
+    plt.xlabel("Genres")
+    plt.ylabel("Number of Movies")
+    plt.title("Movies Available by Genre")
+    plt.xticks(rotation=45)
+    plt.show()
+
+
+def graph_movies_price():
+    movies = load_movies()
+    if not movies:
+        print("No movies to display graph.")
+        return
+
+    # Skip header row if present
+    if movies[0][0] == "ID":
+        movies_data = movies[1:]
+    else:
+        movies_data = movies
+
+    try:
+        prices = [int(m[4]) for m in movies_data]
+    except ValueError:
+        print("Error: Some price values are invalid. Check your movies.csv file.")
+        return
+
+    plt.figure(figsize=(8,5))
+    plt.hist(prices, bins=10, color="salmon", edgecolor="black")
+    plt.xlabel("Price (₹)")
+    plt.ylabel("Number of Movies")
+    plt.title("Price Distribution of Movies")
+    plt.show()
+
+
+
+
 def reports_menu():
     while True:
         print("\nREPORTS MENU")
         print("1. List Customers")
         print("2. List Movies")
         print("3. List Rentals")
-        print("4. Back to Main Menu")
+        print("4. Customer Membership Graph")
+        print("5. Movies Genre Graph")
+        print("6. Movies Price Distribution Graph")
+        print("7. Back to Main Menu")
         ch = input("Enter choice: ")
         if ch == "1":
             customers = load_customers()
@@ -418,6 +487,12 @@ def reports_menu():
             for b in bills:
                 print("Customer:", b[1], "| Movies:", ", ".join(b[2]), "| Total:", b[3])
         elif ch == "4":
+            graph_customers_membership()
+        elif ch == "5":
+            graph_movies_genre()
+        elif ch == "6":
+            graph_movies_price()
+        elif ch == "7":
             break
         else:
             print("Invalid choice.")
