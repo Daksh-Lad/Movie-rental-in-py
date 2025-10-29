@@ -17,7 +17,7 @@ def get_mysql_connection(db_name=None):
     conn_params = {
         "host": "localhost",
         "user": "root",
-        "password": "your_mysql_password"  # Replace with your MySQL root password
+        "password": "your_mysql_password"  # 
     }
     if db_name:
         conn_params["database"] = db_name
@@ -25,7 +25,7 @@ def get_mysql_connection(db_name=None):
 
 def create_billing_db_and_table():
     """
-    Creates database 'movie_rental_db' and table 'rentals' if they do not exist.
+    Creates database 'movie_rental_db' and table 'rentals' if not exist.
     """
     # Connect without specifying DB to create it if missing
     
@@ -393,7 +393,7 @@ def movies_menu():
 
 # ---------------- Billing Menu ----------------
 def billing_menu():
-    # Ensure database and table exist
+    # make sure database and table exist
     create_billing_db_and_table()
 
     while True:
